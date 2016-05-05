@@ -4,79 +4,71 @@ package com.sarah;
 import com.google.gson.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 
-class Forecast{
-    private String name;
-    private List<Double> forecast;
+class Todo {
+    private String body;
+    private boolean done;
+    private int id;
+    private int priority;
+    private String title;
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public List<Double> getForecast() {
-        return forecast;
-    }
-
-    public void setForecast(List<Double> forecast) {
-        this.forecast = forecast;
-    }
-
-    @Override
-    public String toString(){
-        String forecastString = name + ": ";
-        List<String> forecastStrings = new ArrayList<>();
-        for (Double temp :forecast) {
-            forecastString = forecastString + " " + temp.toString()
-                    + ",";
-        }
-        return forecastString;
+    public String toString() {
+        return title + ", " + body + ", " + id + ", " + priority + ", " + done;
     }
 }
 
+class TodoCollection extends HashMap<String, Todo[]> {}
+//class TodoCollection implements Iterable<Todo>{
+//    private List<Todo> todos;
+//
+//
+//    @Override
+//    public Iterator<Todo> iterator() {
+//        return todos.iterator();
+//    }
+//}
+
 public class Main {
     public static void main(String[] args){
-        String jsonData = "[{\"name\"} : \"columbus\", "+
-                "\"forecast\" : [70, 80, 70, 65, 75]}," +
-                "{\"name\"} : \"cleveland\", "+
-                "\"forecast\" : [60, 70, 60, 55, 65]}," +
-                "{\"name\"} : \"cincinnati\", +
-                "\"forecast\" :  [80, 90, 80, 75, 85]}];
+        String jsonData = "{\n" +
+                "  \"todos\": [\n" +
+                "    {\n" +
+                "      \"body\": \"Walk the dog\",\n" +
+                "      \"done\": false,\n" +
+                "      \"id\": 0,\n" +
+                "      \"priority\": 3,\n" +
+                "      \"title\": \"dog\"\n" +
+                "    },\n" +
+                "    {\n" +
+                "      \"body\": \"Pay the bills\",\n" +
+                "      \"done\": false,\n" +
+                "      \"id\": 1,\n" +
+                "      \"priority\": 1,\n" +
+                "      \"title\": \"bills\"\n" +
+                "    }\n" +
+                "  ]\n" +
+                "}";
 
-
-
-        //JsonParser parser = new JsonParser();
-        //Forecast forecast = new Forecast();
-
-        //JsonObject jsonObject = parser.parse(jsonData).getAsJsonObject();
-
-        //for (Map.Entry<String, JsonElement> entry: jsonObject.entrySet()) {
-            //if (entry.getValue().isJsonArray()){
-                //JsonArray jsonArray = entry.getValue().getAsJsonArray();
-
-                //List<Double> temps = new ArrayList<>();
-                //for (JsonElement element: jsonArray) {
-                   // temps.add(element.getAsDouble());
-                //}
-               // forecast.setForecast(temps);
-
-            //}
-            //else {
-                //forecast.setName(entry.getValue().getAsString());
-            //}
-        //}
 
         Gson gson = new Gson();
-        Forecast[] forecasts = gson.fromJson(jsonData, Forecast.class);
-        for (Forecast forecast:forecasts) {
-            System.out.println(forecast);
-
+        TodoCollection todos = gson.fromJson(jsonData, TodoCollection.class);
+//        for(Todo todoItem: todos) {
+//            System.out.println(todoItem);
+//        }
+        for (String key: todos.keySet()) {
+            Todo[] todoArray = todos.get(key);
+            for (Todo todoItem: todoArray) {
+                System.out.println(todoItem);
+            }
         }
+
+        String reserialization = gson.toJson(todos);
+        System.out.println(reserialization);
     }
+
+
 }
